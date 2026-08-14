@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- ✏️ UBAH DI SINI: Judul Tab Browser -->
     <title>A Quiet Kind of Love 🌷✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -18,16 +17,51 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             background-color: var(--bg);
             color: var(--text);
             font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 1.5rem 1rem; text-align: center; overflow-x: hidden;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            padding: 1rem; 
+            text-align: center; 
+            overflow-x: hidden;
         }
 
-        .container { max-width: 420px; width: 100%; position: relative; }
+        .container { 
+            max-width: 420px; 
+            width: 100%; 
+            position: relative; 
+            margin: auto; 
+        }
+
+        /* Floating Music Control Widget */
+        .music-widget {
+            position: fixed; top: 18px; right: 18px; z-index: 999;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(8px);
+            border: 2px solid var(--pink-soft); border-radius: 30px;
+            padding: 6px 14px; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 15px rgba(251, 111, 146, 0.2); cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .music-widget:hover { transform: scale(1.05); background: #FFF; }
+        .music-icon {
+            font-size: 1.2rem; display: inline-block;
+            transition: transform 0.3s;
+        }
+        .music-icon.spin { animation: rotateDisc 2.5s linear infinite; }
+        @keyframes rotateDisc {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .music-text {
+            font-size: 0.75rem; font-weight: 700; color: var(--accent);
+            font-family: 'Fredoka', sans-serif; letter-spacing: 0.5px;
+        }
 
         /* Typography */
         h1.title {
@@ -63,8 +97,15 @@
             border: 2px solid var(--pink-soft); margin-top: 1rem;
         }
 
-        /* FIXED GARDEN SVG ANIMATION */
-        .pot-container { margin: 1rem 0; height: 160px; position: relative; }
+        /* GARDEN SVG ANIMATION */
+        .pot-container { 
+            margin: 1rem auto; 
+            height: 160px; 
+            position: relative; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         
         .stem {
             stroke: #5D8A66; stroke-width: 4; fill: none;
@@ -129,7 +170,6 @@
         }
         .hidden-secret-btn:hover { background: #FFC2D1; transform: scale(1.03); }
 
-        /* Secret Note Box di Bawah Surat */
         .secret-box-below {
             display: none;
             margin-top: 15px; padding: 12px 15px;
@@ -146,35 +186,44 @@
 </head>
 <body>
 
+    <!-- 🎵 AUDIO ELEMENT: Menggunakan file musik latar yang stabil -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="music-widget" onclick="toggleMusic()">
+        <span class="music-icon" id="musicIcon">🎵</span>
+        <span class="music-text" id="musicStatus">MUSIC: OFF</span>
+    </div>
+
     <div class="container">
 
         <!-- 🌸 SECTION 1: OPENING -->
         <div id="sec-1">
             <span style="font-size: 2.5rem; animation: bounce 1s infinite alternate;">🌷</span>
-            <!-- ✏️ UBAH DI SINI: Sapaan Awal -->
-            <h1 class="title">hey, favorite person!</h1>
-            <p class="subtitle">for the person who makes ordinary days feel special.</p>
+            <h1 class="title">Hai, Kamu!</h1>
+            <p class="subtitle">Untuk seseorang yang selalu bikin hari-hariku terasa spesial.</p>
 
             <div class="envelope-box" onclick="goToSec(2)">💌</div>
-            <p style="font-size: 0.8rem; color: #B35467;">(tap the letter to open!)</p>
+            <p style="font-size: 0.8rem; color: #B35467;">(Ketuk amplopnya untuk membuka!)</p>
         </div>
 
-        <!-- 💌 SECTION 2: THINGS I NEVER SAID -->
+        <!-- 💌 SECTION 2: THINGS I NEVER SAID (Bisa diubah teksnya di bagian bawah script) -->
         <div id="sec-2" style="display:none;">
-            <h1 class="title">Things I Never Said... 💭</h1>
-            <p class="subtitle">tap the card to read through ➔</p>
+            <h1 class="title">Hal yang Belum Sempat Aku Bilang... 💭</h1>
+            <p class="subtitle">Ketuk kartunya untuk membaca satu per satu ➔</p>
 
             <div class="card" onclick="nextCardMsg()" style="cursor: pointer; min-height: 120px; display: flex; align-items: center; justify-content: center;">
                 <p id="cardMsg" style="font-size: 1.05rem; font-weight: 600; color: var(--text);"></p>
             </div>
 
-            <button class="sweet-btn" id="btn-sec2" style="display:none;" onclick="goToSec(3)">let's grow something 🌷</button>
+            <button class="sweet-btn" id="btn-sec2" style="display:none;" onclick="goToSec(3)">Yuk, tanam sesuatu 🌷</button>
         </div>
 
         <!-- 🌷 SECTION 3: GROWING GARDEN -->
         <div id="sec-3" style="display:none;">
-            <h1 class="title">Our Little Garden 🌸</h1>
-            <p class="subtitle">tap to nurture our flowers!</p>
+            <h1 class="title">Kebun Kecil Kita 🌸</h1>
+            <p class="subtitle">Ketuk untuk merawat bunga kita!</p>
 
             <div class="card">
                 <div class="pot-container">
@@ -193,59 +242,58 @@
                         </g>
                     </svg>
                 </div>
-                <p id="garden-cap" style="font-weight: 600; font-size: 0.9rem;">Water level: 0% 💧</p>
-                <button class="sweet-btn" id="btn-water" onclick="waterGarden()">Water Plant 💧</button>
+                <p id="garden-cap" style="font-weight: 600; font-size: 0.9rem;">Level Air: 0% 💧</p>
+                <button class="sweet-btn" id="btn-water" onclick="waterGarden()">Siram Tanaman 💧</button>
             </div>
 
-            <button class="sweet-btn" id="btn-sec3" style="display:none;" onclick="goToSec(4)">remember this? 📷</button>
+            <button class="sweet-btn" id="btn-sec3" style="display:none;" onclick="goToSec(4)">Masih ingat ini? 📷</button>
         </div>
 
         <!-- 📷 SECTION 4: BLUR MEMORY SLIDER -->
         <div id="sec-4" style="display:none;">
-            <h1 class="title">Clear The Memory 📷</h1>
-            <p class="subtitle">slide to bring back the picture!</p>
+            <h1 class="title">Hapus Blur Kenangan Kita 📷</h1>
+            <p class="subtitle">Geser tombolnya untuk memunculkan foto!</p>
 
             <div class="card">
                 <div class="img-blur-wrapper">
-                    <!-- ✏️ UBAH DI SINI: Link Foto Kenangan Customer -->
+                    <!-- CATATAN: Ganti link gambar di bawah dengan foto kenangan kalian -->
                     <img id="blurImg" src="https://i.pinimg.com/1200x/72/91/29/7291294b6865eca4c7166af6aed56840.jpg?w=600" style="filter: blur(15px);">
                 </div>
                 <input type="range" min="0" max="100" value="0" id="blurSlider" oninput="adjustBlur(this.value)">
-                <!-- ✏️ UBAH DI SINI: Caption Foto -->
-                <p id="blurCaption" style="font-size: 0.85rem; font-weight: 600; margin-top: 10px; opacity: 0.5;">"our first late-night talk ☕"</p>
+                <!-- CATATAN: Ganti teks caption foto di bawah sesuai keinginan -->
+                <p id="blurCaption" style="font-size: 0.85rem; font-weight: 600; margin-top: 10px; opacity: 0.5;">"Momen ngobrol sampai larut malam ☕"</p>
             </div>
 
-            <button class="sweet-btn" id="btn-sec4" style="display:none;" onclick="goToSec(5)">one last game 💖</button>
+            <button class="sweet-btn" id="btn-sec4" style="display:none;" onclick="goToSec(5)">Satu game terakhir 💖</button>
         </div>
 
         <!-- 💗 SECTION 5: LOVE METER & TYPEWRITER -->
         <div id="sec-5" style="display:none;">
-            <h1 class="title">How Much I Love You:</h1>
+            <h1 class="title">Seberapa Sayang Aku ke Kamu:</h1>
 
             <div class="meter-bg">
                 <div class="meter-fill" id="meterFill"></div>
             </div>
-            <p id="meterText" style="font-family: 'Fredoka', sans-serif; font-size: 1.1rem; color: var(--accent);">10% - Warm & Friendly 🌸</p>
+            <p id="meterText" style="font-family: 'Fredoka', sans-serif; font-size: 1.1rem; color: var(--accent);">10% - Hangat & Asik 🌸</p>
 
-            <button class="sweet-btn" id="btn-boost" onclick="boostLove()">TAP TO BOOST LOVE! 💖</button>
+            <button class="sweet-btn" id="btn-boost" onclick="boostLove()">KETUK UNTUK MENAIKKAN RASA SAYANG! 💖</button>
 
             <!-- Final Letter (Typewriter) -->
             <div class="card" id="letterCard" style="display:none; margin-top: 1.5rem;">
-                <!-- ✏️ UBAH DI SINI: Nama Panggilan Pasangan -->
-                <h3 style="font-family: 'Fredoka', sans-serif; color: var(--accent); margin-bottom: 10px; text-align: left;">Dear [Nama Pasangan], 🌷</h3>
+                <!-- CATATAN: Ganti "Dear Nama Kamu" sesuai panggilan sayang kalian -->
+                <h3 style="font-family: 'Fredoka', sans-serif; color: var(--accent); margin-bottom: 10px; text-align: left;">Dear Ayang / Nama Pacar, 🌷</h3>
                 
                 <div class="typewriter-text" id="typewriter"></div>
 
-                <!-- Tombol Secret Note & Box Surat Rahasia -->
                 <div id="secretContainer" style="display:none;">
                     <div class="hidden-secret-btn" onclick="revealSecretNote()">
-                        [ Tap for a secret note 🤫 ]
+                        [ Ketuk untuk pesan rahasia 🤫 ]
                     </div>
                     
-                    <!-- ✏️ UBAH DI SINI: Pesan Rahasia di Dalam Box Pink -->
                     <div class="secret-box-below" id="secretBox">
-                        <strong style="color: var(--accent);">✦ Secret Note:</strong><br>
-                        Aku cuma mau bilang... terima kasih ya udah hadir dan bikin hari-hariku jauh lebih berwarna! I love you more than coffee! ☕💖
+                        <strong style="color: var(--accent);">✦ Catatan Rahasia:</strong><br>
+                        <!-- CATATAN: Ganti isi pesan rahasia di bawah ini sesukamu -->
+                        Aku cuma mau bilang... terima kasih ya udah hadir dan bikin hari-hariku jauh lebih berwarna! I love you more than coffe! 💖
                     </div>
                 </div>
             </div>
@@ -254,27 +302,58 @@
     </div>
 
     <script>
-        // ✏️ UBAH DI SINI: Array Pesan Rahasia di Kartu (Section 2)
+        // 🎵 MUSIC ENGINE
+        const bgMusic = document.getElementById('bgMusic');
+        const musicIcon = document.getElementById('musicIcon');
+        const musicStatus = document.getElementById('musicStatus');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicIcon.classList.remove('spin');
+                musicStatus.innerText = "MUSIC: OFF";
+                isPlaying = false;
+            } else {
+                bgMusic.play().then(() => {
+                    musicIcon.classList.add('spin');
+                    musicStatus.innerText = "MUSIC: ON";
+                    isPlaying = true;
+                }).catch(err => {
+                    console.log("Audio play error:", err);
+                    alert("Silakan ketuk layar sekali lagi lalu tekan tombol MUSIC 🎵");
+                });
+            }
+        }
+
+        // ==========================================
+        // 📝 CATATAN: Kamu bisa mengubah semua teks di bawah ini!
+        // ==========================================
+        
+        // Teks untuk slide kartu (Section 2)
         const messages = [
-            '"I notice the little things you casually tell me." 💭',
-            '"I love hearing you talk about things you\'re excited about." ✨',
-            '"I feel safe and completely myself around you." 🏡',
-            '"And somewhere along the way... you became my favorite person." 💖'
+            '"Aku selalu merhatiin hal-hal kecil yang kamu cerita." 💭',
+            '"Senang banget kalau denger kamu antusias cerita tentang hal kesukaanmu." ✨',
+            '"Rasanya tenang dan nyaman banget kalau lagi di dekat kamu." 🏡',
+            '"Dan tanpa sadar... kamu jadi orang favoritku sekarang." 💖'
         ];
 
-        // ✏️ UBAH DI SINI: Isi Surat Penutup / Typewriter Utama (Section 5)
-        const letterContent = "I don't know how to say this perfectly, but having you around makes everything feel a little brighter. Thank you for all the quiet moments, the laughter, and for being my favorite part of every day.";
+        // Teks surat panjang di akhir (Section 5)
+        const letterContent = "Aku mungkin gak selalu bisa merangkai kata dengan sempurna, tapi kehadiran kamu benar-benar bikin hari-hariku jauh lebih berarti. Terima kasih untuk semua tawa, obrolan seru, dan momen-momen indah yang kita lewati bareng.";
 
-        // Function Buka Box Surat Rahasia di Bawah
+        // ==========================================
+
         function revealSecretNote() {
             const box = document.getElementById('secretBox');
             box.style.display = 'block';
             confetti({ particleCount: 35, spread: 60, origin: { y: 0.8 } });
         }
 
-
-        // --- ENGINE CODE ---
         function goToSec(num) {
+            if (!isPlaying && num === 2) {
+                toggleMusic();
+            }
+
             for(let i=1; i<=5; i++) {
                 document.getElementById('sec-' + i).style.display = 'none';
             }
@@ -291,7 +370,7 @@
                 document.getElementById('cardMsg').innerText = messages[msgIdx];
                 confetti({ particleCount: 15, spread: 40 });
             } else {
-                document.getElementById('cardMsg').innerText = '"Look what all these little moments grew into! 🌷"';
+                document.getElementById('cardMsg').innerText = '"Lihat kan, semua momen kecil itu akhirnya tumbuh jadi indah! 🌷"';
                 document.getElementById('btn-sec2').style.display = 'inline-block';
             }
         }
@@ -308,16 +387,16 @@
             if(gardenWater === 35) {
                 stem.style.strokeDashoffset = "30";
                 leafL.classList.add('show');
-                cap.innerText = "Water level: 35% - Batang & daun pertama tumbuh! 🌱";
+                cap.innerText = "Level Air: 35% - Batang & daun pertama mulai tumbuh! 🌱";
                 confetti({ particleCount: 15, spread: 30 });
             } else if(gardenWater === 70) {
                 stem.style.strokeDashoffset = "0";
                 leafR.classList.add('show');
-                cap.innerText = "Water level: 70% - Makin tinggi dan rimbun! 🌿";
+                cap.innerText = "Level Air: 70% - Makin tinggi dan rimbun! 🌿";
                 confetti({ particleCount: 25, spread: 50 });
             } else if(gardenWater >= 100) {
                 head.classList.add('bloomed');
-                cap.innerText = "100% Full Bloom! Bunganya mekar sempurna! 🌷✨";
+                cap.innerText = "100% Full Bloom! Bunganya mekar sempurna untukmu! 🌷✨";
                 document.getElementById('btn-water').style.display = 'none';
                 document.getElementById('btn-sec3').style.display = 'inline-block';
                 confetti({ particleCount: 90, spread: 80 });
@@ -338,9 +417,9 @@
 
         let loveLevel = 10;
         const levels = [
-            { pct: 35, text: "35% - Smiles all day! 😊" },
-            { pct: 70, text: "70% - Best Conversations! ☕" },
-            { pct: 100, text: "1000% - BEYOND MEASURE! 🎉🌷" }
+            { pct: 35, text: "35% - Senyum-senyum sendiri! 😊" },
+            { pct: 70, text: "70% - Obrolan paling seru! ☕" },
+            { pct: 100, text: "1000% - SAYANG BANGET POKOKNYA! 🎉🌷" }
         ];
         let lvlIdx = 0;
 
@@ -366,7 +445,6 @@
                 typeIdx++;
                 setTimeout(typeWriterEffect, 30);
             } else {
-                // Munculkan tombol secret note setelah ngetik selesai
                 document.getElementById("secretContainer").style.display = "block";
             }
         }
