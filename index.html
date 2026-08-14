@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ✏️ UBAH DI SINI: Judul Tab Browser -->
+    <title>A Quiet Kind of Love 🌷✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --pink-main: #FF85A1;
+            --pink-soft: #FFC2D1;
+            --bg: #FFE5EC;
+            --card-bg: #FFF0F5;
+            --text: #4A0E17;
+            --accent: #FB6F92;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 1.5rem 1rem; text-align: center; overflow-x: hidden;
+        }
+
+        .container { max-width: 420px; width: 100%; position: relative; }
+
+        /* Typography */
+        h1.title {
+            font-family: 'Fredoka', sans-serif; color: var(--accent);
+            font-size: 1.8rem; margin-bottom: 8px; line-height: 1.2;
+        }
+        p.subtitle { font-size: 0.9rem; color: #8C3A4A; font-weight: 500; margin-bottom: 1.5rem; }
+
+        /* Bouncy Pop Buttons */
+        .sweet-btn {
+            background: var(--accent); color: white; border: none;
+            padding: 12px 26px; border-radius: 30px; font-family: 'Fredoka', sans-serif;
+            font-size: 1rem; cursor: pointer; box-shadow: 0 5px 0px #E0476E;
+            transition: all 0.15s ease; display: inline-block; margin-top: 1rem;
+        }
+        .sweet-btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0px #E0476E; }
+        .sweet-btn:active { transform: translateY(3px); box-shadow: 0 2px 0px #E0476E; }
+
+        /* Bouncy Envelope */
+        .envelope-box {
+            width: 180px; height: 130px; background: #FFB3C6;
+            border-radius: 16px; margin: 1.5rem auto; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 3.5rem; box-shadow: 0 8px 0px #FF85A1;
+            transition: transform 0.2s; position: relative;
+        }
+        .envelope-box:hover { transform: scale(1.05) rotate(-3deg); }
+
+        /* Card Section UI */
+        .card {
+            background: #FFF; padding: 1.5rem; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(251, 111, 146, 0.15);
+            border: 2px solid var(--pink-soft); margin-top: 1rem;
+        }
+
+        /* FIXED GARDEN SVG ANIMATION */
+        .pot-container { margin: 1rem 0; height: 160px; position: relative; }
+        
+        .stem {
+            stroke: #5D8A66; stroke-width: 4; fill: none;
+            stroke-dasharray: 100; stroke-dashoffset: 100;
+            transition: stroke-dashoffset 0.8s ease; stroke-linecap: round;
+        }
+        
+        .leaf {
+            fill: #5D8A66; opacity: 0; transform: scale(0);
+            transition: all 0.5s ease; transform-origin: center;
+        }
+        .leaf.show { opacity: 1; transform: scale(1); }
+
+        .flower-head {
+            opacity: 0; transform: scale(0);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-origin: 60px 35px;
+        }
+        .flower-head.bloomed { opacity: 1; transform: scale(1); }
+
+        /* Memory Blur Slider */
+        .img-blur-wrapper {
+            width: 100%; height: 220px; border-radius: 14px; overflow: hidden;
+            position: relative; margin-bottom: 1rem; border: 2px solid var(--pink-soft);
+        }
+        .img-blur-wrapper img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: filter 0.1s linear;
+        }
+        input[type=range] {
+            width: 100%; -webkit-appearance: none; background: var(--pink-soft);
+            height: 8px; border-radius: 5px; outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 22px; height: 22px;
+            border-radius: 50%; background: var(--accent); cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* Love Meter */
+        .meter-bg {
+            width: 100%; height: 22px; background: #FFF;
+            border-radius: 20px; padding: 3px; border: 2px solid var(--pink-main);
+            margin: 1rem 0; overflow: hidden;
+        }
+        .meter-fill {
+            height: 100%; width: 10%; background: linear-gradient(90deg, #FFB3C6, #FB6F92);
+            border-radius: 20px; transition: width 0.3s ease;
+        }
+
+        /* Typewriter & Secret Box */
+        .typewriter-text {
+            font-size: 0.95rem; line-height: 1.7; text-align: left;
+            color: var(--text);
+        }
+        .hidden-secret-btn {
+            display: inline-block; margin-top: 12px;
+            background: #FFE5EC; border: 2px dashed #FF85A1;
+            padding: 6px 14px; border-radius: 12px;
+            cursor: pointer; font-weight: 600; color: var(--accent);
+            font-size: 0.85rem; transition: all 0.2s;
+        }
+        .hidden-secret-btn:hover { background: #FFC2D1; transform: scale(1.03); }
+
+        /* Secret Note Box di Bawah Surat */
+        .secret-box-below {
+            display: none;
+            margin-top: 15px; padding: 12px 15px;
+            background: #FFF9FA; border-left: 4px solid var(--accent);
+            border-radius: 8px; text-align: left; font-size: 0.9rem;
+            color: var(--text); line-height: 1.5;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- 🌸 SECTION 1: OPENING -->
+        <div id="sec-1">
+            <span style="font-size: 2.5rem; animation: bounce 1s infinite alternate;">🌷</span>
+            <!-- ✏️ UBAH DI SINI: Sapaan Awal -->
+            <h1 class="title">hey, favorite person!</h1>
+            <p class="subtitle">for the person who makes ordinary days feel special.</p>
+
+            <div class="envelope-box" onclick="goToSec(2)">💌</div>
+            <p style="font-size: 0.8rem; color: #B35467;">(tap the letter to open!)</p>
+        </div>
+
+        <!-- 💌 SECTION 2: THINGS I NEVER SAID -->
+        <div id="sec-2" style="display:none;">
+            <h1 class="title">Things I Never Said... 💭</h1>
+            <p class="subtitle">tap the card to read through ➔</p>
+
+            <div class="card" onclick="nextCardMsg()" style="cursor: pointer; min-height: 120px; display: flex; align-items: center; justify-content: center;">
+                <p id="cardMsg" style="font-size: 1.05rem; font-weight: 600; color: var(--text);"></p>
+            </div>
+
+            <button class="sweet-btn" id="btn-sec2" style="display:none;" onclick="goToSec(3)">let's grow something 🌷</button>
+        </div>
+
+        <!-- 🌷 SECTION 3: GROWING GARDEN -->
+        <div id="sec-3" style="display:none;">
+            <h1 class="title">Our Little Garden 🌸</h1>
+            <p class="subtitle">tap to nurture our flowers!</p>
+
+            <div class="card">
+                <div class="pot-container">
+                    <svg width="120" height="150" viewBox="0 0 120 150">
+                        <path d="M 40 120 L 80 120 L 85 145 L 35 145 Z" fill="#FF85A1" />
+                        <path id="flower-stem" class="stem" d="M 60 120 Q 55 75 60 35" />
+                        <path id="leaf-left" class="leaf" d="M 58 90 Q 40 85 42 75 Q 55 78 58 90" />
+                        <path id="leaf-right" class="leaf" d="M 60 70 Q 78 65 76 55 Q 63 58 60 70" />
+                        <g id="flower-head" class="flower-head">
+                            <circle cx="60" cy="23" r="10" fill="#FFC2D1"/>
+                            <circle cx="60" cy="47" r="10" fill="#FFC2D1"/>
+                            <circle cx="48" cy="35" r="10" fill="#FFC2D1"/>
+                            <circle cx="72" cy="35" r="10" fill="#FFC2D1"/>
+                            <circle cx="60" cy="35" r="11" fill="#FB6F92" />
+                            <circle cx="60" cy="35" r="5" fill="#FFE5EC" />
+                        </g>
+                    </svg>
+                </div>
+                <p id="garden-cap" style="font-weight: 600; font-size: 0.9rem;">Water level: 0% 💧</p>
+                <button class="sweet-btn" id="btn-water" onclick="waterGarden()">Water Plant 💧</button>
+            </div>
+
+            <button class="sweet-btn" id="btn-sec3" style="display:none;" onclick="goToSec(4)">remember this? 📷</button>
+        </div>
+
+        <!-- 📷 SECTION 4: BLUR MEMORY SLIDER -->
+        <div id="sec-4" style="display:none;">
+            <h1 class="title">Clear The Memory 📷</h1>
+            <p class="subtitle">slide to bring back the picture!</p>
+
+            <div class="card">
+                <div class="img-blur-wrapper">
+                    <!-- ✏️ UBAH DI SINI: Link Foto Kenangan Customer -->
+                    <img id="blurImg" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600" style="filter: blur(15px);">
+                </div>
+                <input type="range" min="0" max="100" value="0" id="blurSlider" oninput="adjustBlur(this.value)">
+                <!-- ✏️ UBAH DI SINI: Caption Foto -->
+                <p id="blurCaption" style="font-size: 0.85rem; font-weight: 600; margin-top: 10px; opacity: 0.5;">"our first late-night talk ☕"</p>
+            </div>
+
+            <button class="sweet-btn" id="btn-sec4" style="display:none;" onclick="goToSec(5)">one last game 💖</button>
+        </div>
+
+        <!-- 💗 SECTION 5: LOVE METER & TYPEWRITER -->
+        <div id="sec-5" style="display:none;">
+            <h1 class="title">How Much I Love You:</h1>
+
+            <div class="meter-bg">
+                <div class="meter-fill" id="meterFill"></div>
+            </div>
+            <p id="meterText" style="font-family: 'Fredoka', sans-serif; font-size: 1.1rem; color: var(--accent);">10% - Warm & Friendly 🌸</p>
+
+            <button class="sweet-btn" id="btn-boost" onclick="boostLove()">TAP TO BOOST LOVE! 💖</button>
+
+            <!-- Final Letter (Typewriter) -->
+            <div class="card" id="letterCard" style="display:none; margin-top: 1.5rem;">
+                <!-- ✏️ UBAH DI SINI: Nama Panggilan Pasangan -->
+                <h3 style="font-family: 'Fredoka', sans-serif; color: var(--accent); margin-bottom: 10px; text-align: left;">Dear [Nama Pasangan], 🌷</h3>
+                
+                <div class="typewriter-text" id="typewriter"></div>
+
+                <!-- Tombol Secret Note & Box Surat Rahasia -->
+                <div id="secretContainer" style="display:none;">
+                    <div class="hidden-secret-btn" onclick="revealSecretNote()">
+                        [ Tap for a secret note 🤫 ]
+                    </div>
+                    
+                    <!-- ✏️ UBAH DI SINI: Pesan Rahasia di Dalam Box Pink -->
+                    <div class="secret-box-below" id="secretBox">
+                        <strong style="color: var(--accent);">✦ Secret Note:</strong><br>
+                        Aku cuma mau bilang... terima kasih ya udah hadir dan bikin hari-hariku jauh lebih berwarna! I love you more than coffee! ☕💖
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ✏️ UBAH DI SINI: Array Pesan Rahasia di Kartu (Section 2)
+        const messages = [
+            '"I notice the little things you casually tell me." 💭',
+            '"I love hearing you talk about things you\'re excited about." ✨',
+            '"I feel safe and completely myself around you." 🏡',
+            '"And somewhere along the way... you became my favorite person." 💖'
+        ];
+
+        // ✏️ UBAH DI SINI: Isi Surat Penutup / Typewriter Utama (Section 5)
+        const letterContent = "I don't know how to say this perfectly, but having you around makes everything feel a little brighter. Thank you for all the quiet moments, the laughter, and for being my favorite part of every day.";
+
+        // Function Buka Box Surat Rahasia di Bawah
+        function revealSecretNote() {
+            const box = document.getElementById('secretBox');
+            box.style.display = 'block';
+            confetti({ particleCount: 35, spread: 60, origin: { y: 0.8 } });
+        }
+
+
+        // --- ENGINE CODE ---
+        function goToSec(num) {
+            for(let i=1; i<=5; i++) {
+                document.getElementById('sec-' + i).style.display = 'none';
+            }
+            document.getElementById('sec-' + num).style.display = 'block';
+            confetti({ particleCount: 20, spread: 50, origin: { y: 0.6 } });
+        }
+
+        let msgIdx = 0;
+        document.getElementById('cardMsg').innerText = messages[0];
+        
+        function nextCardMsg() {
+            msgIdx++;
+            if(msgIdx < messages.length) {
+                document.getElementById('cardMsg').innerText = messages[msgIdx];
+                confetti({ particleCount: 15, spread: 40 });
+            } else {
+                document.getElementById('cardMsg').innerText = '"Look what all these little moments grew into! 🌷"';
+                document.getElementById('btn-sec2').style.display = 'inline-block';
+            }
+        }
+
+        let gardenWater = 0;
+        function waterGarden() {
+            gardenWater += 35;
+            const stem = document.getElementById('flower-stem');
+            const leafL = document.getElementById('leaf-left');
+            const leafR = document.getElementById('leaf-right');
+            const head = document.getElementById('flower-head');
+            const cap = document.getElementById('garden-cap');
+
+            if(gardenWater === 35) {
+                stem.style.strokeDashoffset = "30";
+                leafL.classList.add('show');
+                cap.innerText = "Water level: 35% - Batang & daun pertama tumbuh! 🌱";
+                confetti({ particleCount: 15, spread: 30 });
+            } else if(gardenWater === 70) {
+                stem.style.strokeDashoffset = "0";
+                leafR.classList.add('show');
+                cap.innerText = "Water level: 70% - Makin tinggi dan rimbun! 🌿";
+                confetti({ particleCount: 25, spread: 50 });
+            } else if(gardenWater >= 100) {
+                head.classList.add('bloomed');
+                cap.innerText = "100% Full Bloom! Bunganya mekar sempurna! 🌷✨";
+                document.getElementById('btn-water').style.display = 'none';
+                document.getElementById('btn-sec3').style.display = 'inline-block';
+                confetti({ particleCount: 90, spread: 80 });
+            }
+        }
+
+        function adjustBlur(val) {
+            const img = document.getElementById('blurImg');
+            const cap = document.getElementById('blurCaption');
+            let blurPx = (100 - val) / 6;
+            img.style.filter = `blur(${blurPx}px)`;
+            cap.style.opacity = val / 100;
+
+            if(val >= 95) {
+                document.getElementById('btn-sec4').style.display = 'inline-block';
+            }
+        }
+
+        let loveLevel = 10;
+        const levels = [
+            { pct: 35, text: "35% - Smiles all day! 😊" },
+            { pct: 70, text: "70% - Best Conversations! ☕" },
+            { pct: 100, text: "1000% - BEYOND MEASURE! 🎉🌷" }
+        ];
+        let lvlIdx = 0;
+
+        function boostLove() {
+            if(lvlIdx < levels.length) {
+                loveLevel = levels[lvlIdx].pct;
+                document.getElementById('meterFill').style.width = loveLevel + '%';
+                document.getElementById('meterText').innerText = levels[lvlIdx].text;
+                confetti({ particleCount: 25 * (lvlIdx + 1), spread: 60 });
+                lvlIdx++;
+            } else {
+                document.getElementById('btn-boost').style.display = 'none';
+                document.getElementById('letterCard').style.display = 'block';
+                typeWriterEffect();
+                confetti({ particleCount: 150, spread: 100 });
+            }
+        }
+
+        let typeIdx = 0;
+        function typeWriterEffect() {
+            if (typeIdx < letterContent.length) {
+                document.getElementById("typewriter").innerHTML += letterContent.charAt(typeIdx);
+                typeIdx++;
+                setTimeout(typeWriterEffect, 30);
+            } else {
+                // Munculkan tombol secret note setelah ngetik selesai
+                document.getElementById("secretContainer").style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
