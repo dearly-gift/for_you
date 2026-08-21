@@ -126,23 +126,75 @@
         }
         .flower-head.bloomed { opacity: 1; transform: scale(1); }
 
-        /* Memory Blur Slider */
+        /* Multi Photo Blur Gallery Styles with Arrows */
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 0.8rem;
+        }
         .img-blur-wrapper {
-            width: 100%; height: 220px; border-radius: 14px; overflow: hidden;
-            position: relative; margin-bottom: 1rem; border: 2px solid var(--pink-soft);
+            width: 100%; height: 200px; border-radius: 14px; overflow: hidden;
+            position: relative; border: 2px solid var(--pink-soft);
         }
         .img-blur-wrapper img {
             width: 100%; height: 100%; object-fit: cover;
-            transition: filter 0.1s linear;
+            transition: filter 0.1s linear; display: none;
         }
+        .img-blur-wrapper img.active-photo { display: block; }
+
+        .arrow-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.85); border: 2px solid var(--pink-soft);
+            color: var(--accent); width: 36px; height: 36px; border-radius: 50%;
+            font-size: 1.1rem; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; z-index: 10; transition: all 0.2s;
+            box-shadow: 0 3px 10px rgba(251, 111, 146, 0.2);
+        }
+        .arrow-btn:hover { background: #FFF; transform: translateY(-50%) scale(1.1); }
+        .prev-btn { left: 8px; }
+        .next-btn { right: 8px; }
+
         input[type=range] {
             width: 100%; -webkit-appearance: none; background: var(--pink-soft);
-            height: 8px; border-radius: 5px; outline: none;
+            height: 8px; border-radius: 5px; outline: none; margin-bottom: 0.8rem;
         }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; width: 22px; height: 22px;
             border-radius: 50%; background: var(--accent); cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .photo-nav {
+            display: flex; justify-content: center; gap: 8px; margin-top: 5px;
+        }
+        .dot-btn {
+            width: 10px; height: 10px; border-radius: 50%; border: none;
+            background: var(--pink-soft); cursor: pointer; transition: transform 0.2s;
+        }
+        .dot-btn.active { background: var(--accent); transform: scale(1.2); }
+
+        /* REVISED: ACTIVE & CUTE MINI GAME STYLING */
+        .game-box {
+            width: 100%; height: 240px; background: linear-gradient(135deg, #FFF0F3 0%, #FFF9FA 100%); 
+            border-radius: 16px; border: 2px dashed var(--accent); position: relative; 
+            overflow: hidden; margin: 1rem 0; cursor: crosshair;
+            box-shadow: inset 0 4px 10px rgba(251, 111, 146, 0.08);
+        }
+        .game-item {
+            position: absolute; font-size: 2.2rem; user-select: none;
+            cursor: pointer; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, floatItem 2s ease-in-out infinite alternate;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            transition: transform 0.1s ease;
+        }
+        .game-item:active { transform: scale(0.7) !important; }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes floatItem {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-8px) rotate(5deg); }
         }
 
         /* Love Meter */
@@ -171,24 +223,30 @@
         .hidden-secret-btn:hover { background: #FFC2D1; transform: scale(1.03); }
 
         .secret-box-below {
-            display: none;
-            margin-top: 15px; padding: 12px 15px;
+            display: none; margin-top: 15px; padding: 12px 15px;
             background: #FFF9FA; border-left: 4px solid var(--accent);
             border-radius: 8px; text-align: left; font-size: 0.9rem;
-            color: var(--text); line-height: 1.5;
-            animation: fadeIn 0.4s ease;
+            color: var(--text); line-height: 1.5; animation: fadeIn 0.4s ease;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* FOOTER STYLING */
+        .site-footer {
+            margin-top: 2.5rem; padding: 1rem 0; font-size: 0.8rem;
+            color: #8C3A4A; font-weight: 500; border-top: 2px dashed var(--pink-soft);
+            width: 100%; max-width: 420px;
+        }
+        .site-footer span { color: var(--accent); font-family: 'Fredoka', sans-serif; }
     </style>
 </head>
 <body>
 
-    <!-- 🎵 AUDIO ELEMENT: Menggunakan file musik latar yang stabil -->
+    <!-- 🎵 AUDIO ELEMENT -->
     <audio id="bgMusic" loop preload="auto">
-        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+        <source src="https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939f792cb.mp3?filename=romantic-lofi-123758.mp3" type="audio/mpeg">
     </audio>
     
     <div class="music-widget" onclick="toggleMusic()">
@@ -201,14 +259,14 @@
         <!-- 🌸 SECTION 1: OPENING -->
         <div id="sec-1">
             <span style="font-size: 2.5rem; animation: bounce 1s infinite alternate;">🌷</span>
-            <h1 class="title">Hi, My Favorit Person!</h1>
+            <h1 class="title">Hai, Kamu!</h1>
             <p class="subtitle">Untuk seseorang yang selalu bikin hari-hariku terasa spesial.</p>
 
             <div class="envelope-box" onclick="goToSec(2)">💌</div>
             <p style="font-size: 0.8rem; color: #B35467;">(Ketuk amplopnya untuk membuka!)</p>
         </div>
 
-        <!-- 💌 SECTION 2: THINGS I NEVER SAID (Bisa diubah teksnya di bagian bawah script) -->
+        <!-- 💌 SECTION 2: THINGS I NEVER SAID -->
         <div id="sec-2" style="display:none;">
             <h1 class="title">Hal yang Belum Sempat Aku Bilang... 💭</h1>
             <p class="subtitle">Ketuk kartunya untuk membaca satu per satu ➔</p>
@@ -246,29 +304,59 @@
                 <button class="sweet-btn" id="btn-water" onclick="waterGarden()">Siram Tanaman 💧</button>
             </div>
 
-            <button class="sweet-btn" id="btn-sec3" style="display:none;" onclick="goToSec(4)">Masih ingat ini? 📷</button>
+            <button class="sweet-btn" id="btn-sec3" style="display:none;" onclick="goToSec(4)">Lihat 3 foto kenangan 📷</button>
         </div>
 
-        <!-- 📷 SECTION 4: BLUR MEMORY SLIDER -->
+        <!-- 📷 SECTION 4: 3-PHOTO BLUR GALLERY SLIDER -->
         <div id="sec-4" style="display:none;">
-            <h1 class="title">Hapus Blur Kenangan Kita 📷</h1>
-            <p class="subtitle">Geser tombolnya untuk memunculkan foto!</p>
+            <h1 class="title">3 Kenangan Indah Kita 📷</h1>
+            <p class="subtitle">Geser blur-nya & pilih foto di bawah!</p>
 
             <div class="card">
-                <div class="img-blur-wrapper">
-                    <!-- CATATAN: Ganti link gambar di bawah dengan foto kenangan kalian -->
-                    <img id="blurImg" src="https://i.pinimg.com/1200x/72/91/29/7291294b6865eca4c7166af6aed56840.jpg?w=600" style="filter: blur(15px);">
+                <div class="gallery-container">
+                    <button class="arrow-btn prev-btn" onclick="prevPhoto()">&#10094;</button>
+                    
+                    <div class="img-blur-wrapper">
+                        <img id="photo1" class="active-photo" src="https://i.pinimg.com/1200x/72/91/29/7291294b6865eca4c7166af6aed56840.jpg?w=600" style="filter: blur(15px);">
+                        <img id="photo2" src="https://i.pinimg.com/1200x/ab/84/c3/ab84c3ea1db241bb62b08a1c97a29e2e.jpg?w=600" style="filter: blur(15px);">
+                        <img id="photo3" src="https://i.pinimg.com/1200x/23/e6/29/23e629396110f0b69bc363a0a300a7b4.jpg?w=600" style="filter: blur(15px);">
+                    </div>
+
+                    <button class="arrow-btn next-btn" onclick="nextPhoto()">&#10095;</button>
                 </div>
+
                 <input type="range" min="0" max="100" value="0" id="blurSlider" oninput="adjustBlur(this.value)">
-                <!-- CATATAN: Ganti teks caption foto di bawah sesuai keinginan -->
-                <p id="blurCaption" style="font-size: 0.85rem; font-weight: 600; margin-top: 10px; opacity: 0.5;">"Momen ngobrol sampai larut malam ☕"</p>
+
+                <div class="photo-nav">
+                    <button class="dot-btn active" onclick="switchPhoto(0)"></button>
+                    <button class="dot-btn" onclick="switchPhoto(1)"></button>
+                    <button class="dot-btn" onclick="switchPhoto(2)"></button>
+                </div>
+
+                <p id="blurCaption" style="font-size: 0.85rem; font-weight: 600; margin-top: 10px; opacity: 0.5;">"Momen pertama kali kita ngobrol santai ☕"</p>
             </div>
 
-            <button class="sweet-btn" id="btn-sec4" style="display:none;" onclick="goToSec(5)">Satu game terakhir 💖</button>
+            <button class="sweet-btn" id="btn-sec4" style="display:none;" onclick="goToSec(5)">Main tangkap bunga yuk 🌸</button>
         </div>
 
-        <!-- 💗 SECTION 5: LOVE METER & TYPEWRITER -->
+        <!-- 🌸 SECTION 5: REVISED MINI GAME (CATCH THE PINK FLOWERS) -->
         <div id="sec-5" style="display:none;">
+            <h1 class="title">Tangkap Bunga Pinknya! 🌸</h1>
+            <p class="subtitle">Kumpulkan 7 bunga pink sebelum waktunya habis! Hati-hati keliru 🍃</p>
+
+            <div class="card">
+                <div class="game-box" id="gameBox"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <p id="gameScore" style="font-weight: 700; color: var(--accent);">Skor: 0 / 7 🌸</p>
+                    <p id="gameTimer" style="font-weight: 600; font-size: 0.85rem; color: #8C3A4A;">Waktu: 15s ⏱️</p>
+                </div>
+            </div>
+
+            <button class="sweet-btn" id="btn-sec5" style="display:none;" onclick="goToSec(6)">Lanjut ke halaman terakhir ✨</button>
+        </div>
+
+        <!-- 💗 SECTION 6: LOVE METER & TYPEWRITER -->
+        <div id="sec-6" style="display:none;">
             <h1 class="title">Seberapa Sayang Aku ke Kamu:</h1>
 
             <div class="meter-bg">
@@ -278,10 +366,8 @@
 
             <button class="sweet-btn" id="btn-boost" onclick="boostLove()">KETUK UNTUK MENAIKKAN RASA SAYANG! 💖</button>
 
-            <!-- Final Letter (Typewriter) -->
             <div class="card" id="letterCard" style="display:none; margin-top: 1.5rem;">
-                <!-- CATATAN: Ganti "Dear Nama Kamu" sesuai panggilan sayang kalian -->
-                <h3 style="font-family: 'Fredoka', sans-serif; color: var(--accent); margin-bottom: 10px; text-align: left;">Dear Ayang / Nama Pacar, 🌷</h3>
+                <h3 style="font-family: 'Fredoka', sans-serif; color: var(--accent); margin-bottom: 10px; text-align: left;">Dear Ayang, 🌷</h3>
                 
                 <div class="typewriter-text" id="typewriter"></div>
 
@@ -292,14 +378,20 @@
                     
                     <div class="secret-box-below" id="secretBox">
                         <strong style="color: var(--accent);">✦ Catatan Rahasia:</strong><br>
-                        <!-- CATATAN: Ganti isi pesan rahasia di bawah ini sesukamu -->
-                        Aku cuma mau bilang... terima kasih ya udah hadir dan bikin hari-hariku jauh lebih berwarna! I love you more than coffe! 💖
+                        Aku cuma mau bilang... terima kasih ya udah hadir dan bikin hari-hariku jauh lebih berwarna! I love you! 💖
+                        <br><br>
+                        <div style="text-align: right; font-style: italic; font-weight: 600; color: var(--accent);">— Dari [Nama Kamu] 🌷</div>
                     </div>
                 </div>
             </div>
         </div>
 
     </div>
+
+    <!-- 🌷 FOOTER -->
+    <footer class="site-footer">
+        Made with <span>💖</span> and a quiet kind of love.
+    </footer>
 
     <script>
         // 🎵 MUSIC ENGINE
@@ -326,11 +418,6 @@
             }
         }
 
-        // ==========================================
-        // 📝 CATATAN: Kamu bisa mengubah semua teks di bawah ini!
-        // ==========================================
-        
-        // Teks untuk slide kartu (Section 2)
         const messages = [
             '"Aku selalu merhatiin hal-hal kecil yang kamu cerita." 💭',
             '"Senang banget kalau denger kamu antusias cerita tentang hal kesukaanmu." ✨',
@@ -338,10 +425,7 @@
             '"Dan tanpa sadar... kamu jadi orang favoritku sekarang." 💖'
         ];
 
-        // Teks surat panjang di akhir (Section 5)
         const letterContent = "Aku mungkin gak selalu bisa merangkai kata dengan sempurna, tapi kehadiran kamu benar-benar bikin hari-hariku jauh lebih berarti. Terima kasih untuk semua tawa, obrolan seru, dan momen-momen indah yang kita lewati bareng.";
-
-        // ==========================================
 
         function revealSecretNote() {
             const box = document.getElementById('secretBox');
@@ -354,11 +438,16 @@
                 toggleMusic();
             }
 
-            for(let i=1; i<=5; i++) {
-                document.getElementById('sec-' + i).style.display = 'none';
+            for(let i=1; i<=6; i++) {
+                const sec = document.getElementById('sec-' + i);
+                if(sec) sec.style.display = 'none';
             }
             document.getElementById('sec-' + num).style.display = 'block';
             confetti({ particleCount: 20, spread: 50, origin: { y: 0.6 } });
+
+            if(num === 5 && !gameStarted) {
+                startMiniGame();
+            }
         }
 
         let msgIdx = 0;
@@ -403,16 +492,164 @@
             }
         }
 
+        const photoCaptions = [
+            '"Momen pertama kali kita ngobrol santai ☕"',
+            '"Jalan-jalan sore yang bikin senyum terus ✨"',
+            '"Salah satu hari paling seru bareng kamu 🌷"'
+        ];
+        
+        let currentPhotoIdx = 0;
+
+        function switchPhoto(idx) {
+            currentPhotoIdx = idx;
+            for(let i=1; i<=3; i++) {
+                document.getElementById('photo' + i).classList.remove('active-photo');
+            }
+            document.getElementById('photo' + (idx + 1)).classList.add('active-photo');
+
+            const dots = document.querySelectorAll('.dot-btn');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === idx);
+            });
+
+            document.getElementById('blurCaption').innerText = photoCaptions[idx];
+            document.getElementById('blurSlider').value = 0;
+            adjustBlur(0);
+        }
+
+        function nextPhoto() {
+            let newIdx = (currentPhotoIdx + 1) % 3;
+            switchPhoto(newIdx);
+        }
+
+        function prevPhoto() {
+            let newIdx = (currentPhotoIdx - 1 + 3) % 3;
+            switchPhoto(newIdx);
+        }
+
         function adjustBlur(val) {
-            const img = document.getElementById('blurImg');
+            const activeImg = document.querySelector('.img-blur-wrapper img.active-photo');
             const cap = document.getElementById('blurCaption');
             let blurPx = (100 - val) / 6;
-            img.style.filter = `blur(${blurPx}px)`;
+            activeImg.style.filter = `blur(${blurPx}px)`;
             cap.style.opacity = val / 100;
 
-            if(val >= 95) {
+            if(currentPhotoIdx === 2 && val >= 95) {
                 document.getElementById('btn-sec4').style.display = 'inline-block';
             }
+        }
+
+        // 🌸 REVISED MINI GAME SCRIPT (CATCH THE PINK FLOWERS)
+        let gameStarted = false;
+        let flowerScore = 0;
+        const targetFlowers = 7;
+        let gameInterval;
+        let timeLeft = 15;
+        let timerInterval;
+
+        function startMiniGame() {
+            gameStarted = true;
+            flowerScore = 0;
+            timeLeft = 15;
+            updateGameScoreDisplay();
+            
+            const gameBox = document.getElementById('gameBox');
+            gameBox.innerHTML = '';
+
+            // Interval untuk memunculkan item secara aktif
+            gameInterval = setInterval(() => {
+                if(flowerScore >= targetFlowers) return;
+                spawnGameItem();
+            }, 600);
+
+            // Interval hitung mundur waktu
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('gameTimer').innerText = `Waktu: ${timeLeft}s ⏱️`;
+                
+                if (timeLeft <= 0 || flowerScore >= targetFlowers) {
+                    clearInterval(gameInterval);
+                    clearInterval(timerInterval);
+                    endMiniGame();
+                }
+            }, 1000);
+        }
+
+        function spawnGameItem() {
+            const gameBox = document.getElementById('gameBox');
+            const item = document.createElement('div');
+            item.classList.add('game-item');
+
+            const rand = Math.random();
+            let itemType = '🌸'; // Bunga utama
+            let isTarget = true;
+
+            if (rand > 0.7) {
+                itemType = '🍃'; // Daun pengganggu
+                isTarget = false;
+            } else if (rand > 0.55) {
+                itemType = '🐝'; // Lebah pengganggu
+                isTarget = false;
+            }
+
+            item.innerText = itemType;
+
+            const maxX = gameBox.clientWidth - 50;
+            const maxY = gameBox.clientHeight - 50;
+            item.style.left = Math.floor(Math.random() * maxX) + 'px';
+            item.style.top = Math.floor(Math.random() * maxY) + 'px';
+
+            item.onclick = function() {
+                if(isTarget) {
+                    flowerScore++;
+                    updateGameScoreDisplay();
+                    confetti({ particleCount: 12, spread: 40, origin: { y: 0.65 } });
+                    
+                    // Efek klik pop-out
+                    item.style.transform = 'scale(1.4)';
+                    setTimeout(() => item.remove(), 100);
+
+                    if(flowerScore >= targetFlowers) {
+                        clearInterval(gameInterval);
+                        clearInterval(timerInterval);
+                        endMiniGameWin();
+                    }
+                } else {
+                    // Jika salah klik (kena daun/lebah)
+                    item.style.transform = 'scale(0.4) rotate(45deg)';
+                    flowerScore = Math.max(0, flowerScore - 1); // Penalti kecil
+                    updateGameScoreDisplay();
+                    setTimeout(() => item.remove(), 150);
+                }
+            };
+
+            gameBox.appendChild(item);
+
+            // Item otomatis hilang setelah beberapa detik jika tidak diklik
+            setTimeout(() => {
+                if(item.parentElement) {
+                    item.style.transform = 'scale(0)';
+                    setTimeout(() => item.remove(), 200);
+                }
+            }, 1100);
+        }
+
+        function endMiniGameWin() {
+            const gameBox = document.getElementById('gameBox');
+            gameBox.innerHTML = '<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; font-family:\'Fredoka\', sans-serif; color:var(--accent); font-size:1.1rem; gap:8px;"><span>🎉 Yeay, Berhasil Mengumpulkan Bunga! 🌸</span><span style="font-size:0.85rem; color:#8C3A4A;">Hebat banget refleksnya!</span></div>';
+            document.getElementById('btn-sec5').style.display = 'inline-block';
+            confetti({ particleCount: 80, spread: 90 });
+        }
+
+        function endMiniGame() {
+            if (flowerScore < targetFlowers) {
+                const gameBox = document.getElementById('gameBox');
+                gameBox.innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; font-family:'Fredoka', sans-serif; color:var(--accent); font-size:1rem; gap:8px;"><span>Waktu habis! Baru dapat ${flowerScore}/${targetFlowers} 🥺</span><button class="sweet-btn" style="margin-top:5px; padding:6px 16px; font-size:0.85rem;" onclick="startMiniGame()">Coba Lagi 🔄</button></div>`;
+            }
+        }
+
+        function updateGameScoreDisplay() {
+            document.getElementById('gameScore').innerText = `Skor: ${flowerScore} / ${targetFlowers} 🌸`;
         }
 
         let loveLevel = 10;
